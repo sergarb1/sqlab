@@ -10,7 +10,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SQLab · Practica SQL con un motor real</title>
-<meta name="description" content="Laboratorio de SQL en el navegador: 44 retos con SQLite real (WebAssembly), esquema navegable y modo libre. Sin backend.">
+<meta name="description" content="Laboratorio de SQL en el navegador: 44 retos con SQLite real (WebAssembly), esquema navegable y modo libre. Sin backend, instalable y también sin conexión.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" id="theme-color" content="#070b14">
+<meta name="application-name" content="SQLab">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SQLab">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b14'/%3E%3Cpath d='M14 26c0-6 8-10 18-10s18 4 18 10-8 10-18 10-18-4-18-10z' fill='none' stroke='%233ee9c4' stroke-width='4'/%3E%3Cpath d='M14 26v12c0 6 8 10 18 10s18-4 18-10V26' fill='none' stroke='%233ee9c4' stroke-width='4'/%3E%3C/svg%3E">
 <script>
   /* El tema se aplica antes de pintar para que no haya destello. */
@@ -37,6 +45,13 @@
     </span>
   </a>
 
+  <nav class="top-nav" aria-label="Secciones de la portada">
+    <a href="#retos">Retos</a>
+    <a href="#caracteristicas">Características</a>
+    <a href="#como">Cómo se practica</a>
+    <a href="#motor">Motor</a>
+  </nav>
+
   <nav class="modes" aria-label="Modo de trabajo">
     <button class="mode-btn is-active" id="mode-practica" data-mode="practica">🎯 Práctica</button>
     <button class="mode-btn" id="mode-sandbox" data-mode="sandbox">🧪 Laboratorio</button>
@@ -50,6 +65,9 @@
       </div>
       <div class="bar"><i id="progress-fill"></i></div>
     </div>
+    <button type="button" class="icon-btn" id="btn-install" hidden aria-label="Instalar SQLab en este dispositivo" title="Instalar SQLab">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
+    </button>
     <button type="button" class="icon-btn" id="btn-home" aria-label="Volver a la portada" title="Volver a la portada">⌂</button>
     <button type="button" class="icon-btn" id="theme-toggle" aria-label="Cambiar de tema" aria-pressed="false" title="Cambiar de tema"><span id="theme-icon" aria-hidden="true">☀</span></button>
   </div>
@@ -63,8 +81,8 @@
       <h1>Aprende SQL <em>practicando</em>, de verdad</h1>
       <p class="lead">44 retos por niveles sobre una base de datos de tienda. Escribes la consulta, se ejecuta en un SQLite de verdad y se corrige al instante comparándola con la solución oficial.</p>
       <div class="hero-actions">
-        <button type="button" class="primary big" id="cta-start">Empezar a practicar →</button>
-        <button type="button" class="ghost big" id="cta-sandbox">Abrir laboratorio</button>
+        <button type="button" class="primary big js-start" id="cta-start">Empezar a practicar →</button>
+        <button type="button" class="ghost big js-sandbox" id="cta-sandbox">Abrir laboratorio</button>
       </div>
       <ul class="stats">
         <li><b id="stat-total">44</b><span>retos</span></li>
@@ -100,7 +118,7 @@ LIMIT 3;</pre>
     </div>
   </section>
 
-  <section class="home-levels" aria-labelledby="home-levels-title">
+  <section class="home-levels" id="retos" aria-labelledby="home-levels-title">
     <div class="sec-head">
       <h2 id="home-levels-title">Tu progreso por nivel</h2>
       <span class="muted small" id="home-levels-summary">Cargando tu progreso…</span>
@@ -110,7 +128,7 @@ LIMIT 3;</pre>
     </div>
   </section>
 
-  <section class="features" aria-label="Qué ofrece SQLab">
+  <section class="features" id="caracteristicas" aria-label="Qué ofrece SQLab">
     <article class="feature">
       <div class="ico" aria-hidden="true">🎯</div>
       <h3>Retos que se corrigen solos</h3>
@@ -126,9 +144,24 @@ LIMIT 3;</pre>
       <h3>Sin servidor ni cuentas</h3>
       <p>Todo se ejecuta en tu navegador y el progreso se guarda en este dispositivo. Puedes abrirlo incluso con doble clic, sin conexión.</p>
     </article>
+    <article class="feature">
+      <div class="ico" aria-hidden="true">⌨️</div>
+      <h3>Editor pensado para escribir rápido</h3>
+      <p>Resaltado de sintaxis, <kbd>Ctrl</kbd>+<kbd>↵</kbd> para ejecutar, <kbd>Tab</kbd> para indentar y un borrador guardado por reto aunque cierres la pestaña.</p>
+    </article>
+    <article class="feature">
+      <div class="ico" aria-hidden="true">💡</div>
+      <h3>Pistas que explican, no solo dan la respuesta</h3>
+      <p>Cada reto trae una pista antes de la solución y, al acertar, la idea de SQL que acabas de practicar.</p>
+    </article>
+    <article class="feature">
+      <div class="ico" aria-hidden="true">📲</div>
+      <h3>Se instala como una app</h3>
+      <p>Es una PWA: añádela a la pantalla de inicio y ábrela sin barra de navegador. Una vez cargada, los 44 retos funcionan sin conexión.</p>
+    </article>
   </section>
 
-  <section class="how">
+  <section class="how" id="como">
     <div class="sec-head">
       <h2>Cómo se practica</h2>
       <span class="muted small">De los filtros a las funciones de ventana.</span>
@@ -149,11 +182,29 @@ LIMIT 3;</pre>
     </ol>
   </section>
 
-  <section class="engine-note">
+  <section class="engine-note" id="motor">
     <div class="ico" aria-hidden="true">⚙️</div>
     <div>
       <h3>Motor real, no un simulador</h3>
       <p>SQLite compilado a WebAssembly se carga una sola vez (<code>~880 KB</code>) y se ejecuta dentro de tu navegador: las mismas consultas, el mismo plan y los mismos errores que en una base de datos de verdad.</p>
+    </div>
+  </section>
+
+  <section class="closing" id="empezar" aria-labelledby="closing-title">
+    <div>
+      <h2 id="closing-title">Tu primera consulta, en un minuto</h2>
+      <p>Sin registro, sin instalar nada y sin miedo a romper la base de datos: puedes restaurarla cuando quieras.</p>
+      <div class="stack" aria-label="Tecnología">
+        <span>SQLite 3</span>
+        <span>WebAssembly</span>
+        <span>sql.js</span>
+        <span>sin backend</span>
+        <span>AGPL-3.0</span>
+      </div>
+    </div>
+    <div class="closing-actions">
+      <button type="button" class="primary big js-start" id="cta-start-2">Empezar a practicar →</button>
+      <button type="button" class="ghost big js-sandbox" id="cta-sandbox-2">Abrir laboratorio</button>
     </div>
   </section>
 

@@ -19,6 +19,9 @@ enviar consultas a ningún servidor.
   ```
 
 - **GitHub Pages**: sube el contenido del proyecto y activa Pages; no hace falta configurar nada más.
+- **Instalada como app (PWA)**: sobre `https://` o `localhost`, el navegador ofrece instalarla (botón
+  **Instalar** en la barra superior). El service worker (`sw.js`) cachea todo, incluido el WASM, así
+  que después se abre sin conexión. Desde `file://` no hay service worker, pero la app funciona igual.
 
 ## Qué incluye
 
@@ -48,6 +51,9 @@ app.js                     motor, ejecución, comparación y progreso
 vendor/sql-wasm.js         sql.js (SQLite → WebAssembly)
 vendor/sql-wasm-base64.js  el binario WASM embebido, para funcionar desde file://
 vendor/sql-wasm.wasm       binario original (referencia / uso con servidor)
+manifest.webmanifest       datos de instalación de la PWA
+sw.js                      service worker (caché y uso sin conexión)
+icons/                     iconos de la app (192, 512, maskable y apple-touch)
 ```
 
 ## Añadir un reto

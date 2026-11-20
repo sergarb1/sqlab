@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SQLab">
+  <rect width="512" height="512" rx="112" fill="#0d1626"/>
+  <g fill="#3ee9c4">
+    <ellipse cx="256" cy="196" rx="86" ry="26"/>
+    <rect x="170" y="196" width="172" height="120"/>
+    <ellipse cx="256" cy="316" rx="86" ry="26"/>
+  </g>
+  <g fill="none" stroke="#0d1626" stroke-width="8">
+    <ellipse cx="256" cy="236" rx="86" ry="26"/>
+    <ellipse cx="256" cy="276" rx="86" ry="26"/>
+  </g>
+</svg>

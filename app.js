@@ -49,6 +49,7 @@
     lastDuration: 0,
     tab: 'mine',
     engineReady: false,
+    installPrompt: null,
     SQL: null
   };
 
@@ -104,6 +105,8 @@
       button.setAttribute('aria-label', button.title);
       button.setAttribute('aria-pressed', light ? 'true' : 'false');
     }
+    const meta = $('#theme-color');
+    if (meta) meta.setAttribute('content', light ? '#f2f5fb' : '#070b14');
     if (persist) saveJSON(STORAGE.theme, light ? 'light' : 'dark');
   }
 
@@ -111,6 +114,16 @@
     const total = $('#stat-total');
     if (total) total.textContent = String(EXERCISES.length);
     renderProgress();
+  }
+
+  /** Registra el service worker (solo con http/https) para poder instalar la app. */
+  function setupPwa() {
+    if (!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) return;
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('./sw.js').catch(function () {
+        /* sin service worker la aplicación sigue funcionando igual */
+      });
+    });
   }
 
   /** Barras de progreso por nivel en la portada. */
@@ -176,6 +189,7 @@
 
   async function boot() {
     applyTheme(loadJSON(STORAGE.theme, document.documentElement.dataset.theme) === 'light' ? 'light' : 'dark', false);
+    setupPwa();
     editor = createEditor();
     bindEvents();
     renderSchema();
@@ -464,8 +478,8 @@
     $('#progress-fill').style.width = pct + '%';
     const stat = $('#stat-progress');
     if (stat) stat.textContent = String(done);
-    const cta = $('#cta-start');
-    if (cta) cta.textContent = done ? 'Seguir practicando →' : 'Empezar a practicar →';
+    const ctaText = done ? 'Seguir practicando →' : 'Empezar a practicar →';
+    $$('.js-start').forEach(function (btn) { btn.textContent = ctaText; });
     renderHomeLevels();
   }
 
@@ -887,16 +901,50 @@
     $('#theme-toggle').addEventListener('click', function () {
       applyTheme(currentTheme() === 'light' ? 'dark' : 'light', true);
     });
-    $('#cta-start').addEventListener('click', function () {
-      showView('app');
-      setMode('practica');
-      selectExercise(state.currentId || firstUnsolved());
-      editor.focus();
+    const installBtn = $('#btn-install');
+    if (installBtn) {
+      window.addEventListener('beforeinstallprompt', function (event) {
+        event.preventDefault();
+        state.installPrompt = event;
+        installBtn.hidden = false;
+      });
+      installBtn.addEventListener('click', function () {
+        if (!state.installPrompt) return;
+        const prompt = state.installPrompt;
+        state.installPrompt = null;
+        try {
+          const shown = prompt.prompt();
+          if (shown && typeof shown.catch === 'function') {
+            /* sin gesto de usuario el navegador rechaza la promesa: no es un fallo de la app */
+            shown.catch(function () {});
+          }
+          prompt.userChoice.then(function (choice) {
+            installBtn.hidden = choice.outcome === 'accepted';
+          }).catch(function () { /* el navegador decidió no mostrar el diálogo */ });
+        } catch (err) {
+          installBtn.hidden = true;
+        }
+      });
+      window.addEventListener('appinstalled', function () {
+        state.installPrompt = null;
+        installBtn.hidden = true;
+      });
+    }
+
+    $$('.js-start').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        showView('app');
+        setMode('practica');
+        selectExercise(state.currentId || firstUnsolved());
+        editor.focus();
+      });
     });
-    $('#cta-sandbox').addEventListener('click', function () {
-      showView('app');
-      setMode('sandbox');
-      editor.focus();
+    $$('.js-sandbox').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        showView('app');
+        setMode('sandbox');
+        editor.focus();
+      });
     });
 
     $('#mode-practica').addEventListener('click', function () { setMode('practica'); });
