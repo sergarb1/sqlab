@@ -851,7 +851,24 @@ button.big { padding: 11px 19px; font-size: 14px; border-radius: 11px; }
 .top-nav a:hover { color: var(--text); background: var(--hover); }
 [data-view="app"] .top-nav { display: none; }
 
-#btn-install svg { width: 15px; height: 15px; }
+.install-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(62, 233, 196, .45);
+  background: rgba(62, 233, 196, .12);
+  color: var(--accent);
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.install-btn:hover { color: var(--accent-hi); border-color: var(--accent); background: rgba(62, 233, 196, .2); }
+.install-btn:active { transform: translateY(1px); }
+.install-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.install-btn svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 /* ── chips de stack ── */
 .stack { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
