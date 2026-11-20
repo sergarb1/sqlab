@@ -113,6 +113,40 @@
     renderProgress();
   }
 
+  /** Barras de progreso por nivel en la portada. */
+  function renderHomeLevels() {
+    const wrap = $('#home-levels');
+    if (!wrap) return;
+    let done = 0;
+    let total = 0;
+    wrap.innerHTML = Object.keys(LEVELS).map(function (key) {
+      const level = Number(key);
+      const all = EXERCISES.filter(function (ex) { return ex.level === level; });
+      const solved = all.filter(function (ex) { return state.solved.has(ex.id); }).length;
+      const pct = all.length ? Math.round((solved / all.length) * 100) : 0;
+      const complete = all.length > 0 && solved === all.length;
+      done += solved;
+      total += all.length;
+      return '<div class="lp-item' + (complete ? ' is-done' : '') + '">' +
+        '<div class="lp-top">' +
+          '<span class="lp-name">' + escapeHTML(LEVELS[level]) + '</span>' +
+          '<span class="lp-count">' + solved + ' / ' + all.length + (complete ? ' ✓' : '') + '</span>' +
+        '</div>' +
+        '<div class="lp-bar" role="progressbar" aria-label="' + escapeHTML(LEVELS[level]) + '" ' +
+          'aria-valuemin="0" aria-valuemax="' + all.length + '" aria-valuenow="' + solved + '">' +
+          '<i style="width:' + pct + '%"></i>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+    const summary = $('#home-levels-summary');
+    if (summary) {
+      const pct = total ? Math.round((done / total) * 100) : 0;
+      summary.textContent = done
+        ? done + ' de ' + total + ' retos · ' + pct + ' %'
+        : 'Aún no has resuelto ninguno · 0 de ' + total + ' retos';
+    }
+  }
+
   /** Pinta en la portada una consulta real ejecutada contra tienda.db. */
   function renderDemoTable() {
     const target = $('#demo-results');
@@ -432,6 +466,7 @@
     if (stat) stat.textContent = String(done);
     const cta = $('#cta-start');
     if (cta) cta.textContent = done ? 'Seguir practicando →' : 'Empezar a practicar →';
+    renderHomeLevels();
   }
 
   /* ───────────────── reto actual ───────────────── */
