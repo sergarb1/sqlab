@@ -774,6 +774,69 @@ button.big { padding: 11px 19px; font-size: 14px; border-radius: 11px; }
 .lp-item.is-done .lp-count { color: var(--green); }
 .lp-item.is-done .lp-bar > i { background: linear-gradient(90deg, var(--accent-lo), var(--green)); }
 
+/* ── atajos de teclado ── */
+.sc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.sc-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.sc-keys { display: flex; gap: 4px; flex-shrink: 0; padding-top: 1px; }
+.sc-keys kbd {
+  margin: 0;
+  font-size: 11.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  background: var(--surface-2);
+  color: var(--text);
+}
+.sc-item b { display: block; font-size: 13.5px; margin-bottom: 2px; }
+.sc-item p { font-size: 12.8px; color: var(--text-2); }
+.sc-item code, .faq code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  background: var(--code-bg);
+  border: 1px solid var(--line-soft);
+  border-radius: 4px;
+  padding: 0 4px;
+  color: var(--code-ink);
+}
+.sc-item p kbd { margin-left: 2px; }
+
+/* ── preguntas frecuentes ── */
+.faq { display: flex; flex-direction: column; gap: 8px; }
+.faq details {
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  padding: 0 16px;
+}
+.faq details[open] { border-color: var(--line); background: var(--surface-2); }
+.faq summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; font-family: var(--mono); font-size: 15px; color: var(--accent); }
+.faq details[open] summary::after { content: '−'; }
+.faq summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.faq p { padding: 0 0 14px; font-size: 13px; color: var(--text-2); max-width: 78ch; }
+.faq a { color: var(--accent); }
+
 /* ── navegación de secciones (portada) ── */
 .top-nav { display: flex; align-items: center; gap: 2px; }
 .top-nav a {
@@ -818,7 +881,7 @@ button.big { padding: 11px 19px; font-size: 14px; border-radius: 11px; }
 .closing p { margin-top: 6px; font-size: 13.5px; color: var(--text-2); max-width: 52ch; }
 .closing-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 
-@media (max-width: 900px) {
+@media (max-width: 1040px) {
   .top-nav { display: none; }
 }
 

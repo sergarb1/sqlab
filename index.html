@@ -49,6 +49,8 @@
     <a href="#retos">Retos</a>
     <a href="#caracteristicas">Características</a>
     <a href="#como">Cómo se practica</a>
+    <a href="#atajos">Atajos</a>
+    <a href="#preguntas">FAQ</a>
     <a href="#motor">Motor</a>
   </nav>
 
@@ -180,6 +182,62 @@ LIMIT 3;</pre>
         <p>Si no coincide, te dice cuántas filas faltan o sobran, con una fila de ejemplo y una pista.</p>
       </li>
     </ol>
+  </section>
+
+  <section class="shortcuts" id="atajos" aria-labelledby="atajos-title">
+    <div class="sec-head">
+      <h2 id="atajos-title">Atajos de teclado</h2>
+      <span class="muted small">Dos teclas para no soltar el teclado.</span>
+    </div>
+    <div class="sc-grid">
+      <div class="sc-item">
+        <span class="sc-keys" aria-hidden="true"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
+        <div>
+          <b>Ejecutar la consulta</b>
+          <p>Lanza el SQL contra <code>tienda.db</code> y compara el resultado. En Mac es <kbd>⌘</kbd><kbd>↵</kbd>.</p>
+        </div>
+      </div>
+      <div class="sc-item">
+        <span class="sc-keys" aria-hidden="true"><kbd>Tab</kbd></span>
+        <div>
+          <b>Indentar</b>
+          <p>Inserta dos espacios donde está el cursor en lugar de saltar al siguiente control.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-section" id="preguntas" aria-labelledby="faq-title">
+    <div class="sec-head">
+      <h2 id="faq-title">Preguntas frecuentes</h2>
+      <span class="muted small">Lo que suele preguntarse antes de empezar.</span>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>¿Necesito instalarlo o crear una cuenta?</summary>
+        <p>No. Se abre en el navegador y funciona sin registro: el motor SQLite viaja con la propia página. Si quieres, puedes instalarla como app desde el botón <b>Instalar</b> de la barra superior y abrirla sin barra de direcciones.</p>
+      </details>
+      <details>
+        <summary>¿Dónde se guarda mi progreso?</summary>
+        <p>En este dispositivo, en el almacenamiento local del navegador: los retos resueltos y el borrador de cada consulta. Nada se envía a ningún servidor. El enlace «Reiniciar progreso» de la barra lateral lo borra, y también desaparece si limpias los datos del navegador.</p>
+      </details>
+      <details>
+        <summary>¿Puedo romper la base de datos?</summary>
+        <p>En los retos no: solo se permiten consultas de lectura. En el <b>laboratorio</b> puedes crear tablas, insertar o borrar lo que quieras, y <b>Restaurar datos</b> devuelve <code>tienda.db</code> a su estado original al instante.</p>
+      </details>
+      <details>
+        <summary>¿Funciona sin conexión?</summary>
+        <p>Sí, después de la primera visita. El <i>service worker</i> guarda la aplicación y el binario de WebAssembly en caché, así que puede abrirse sin red. También funciona con doble clic en <code>index.html</code>, aunque ahí no se instala.</p>
+      </details>
+      <details>
+        <summary>¿Cómo corrige mi consulta?</summary>
+        <p>Ejecuta tu SQL contra una copia limpia de la base de datos y compara sus filas con las de la solución oficial, sin importar el orden salvo cuando el enunciado lo exige. En ese caso se comprueba la columna pedida tolerando los empates.</p>
+      </details>
+      <details>
+        <summary>¿Es gratis? ¿Con qué licencia?</summary>
+        <p>Sí: sin anuncios, sin cuentas y sin límites. El código está en <a href="https://github.com/sergarb1/sqlab" target="_blank" rel="noreferrer">github.com/sergarb1/sqlab</a> con licencia AGPL-3.0, © 2026 Sergi Garcia Barea.</p>
+      </details>
+    </div>
   </section>
 
   <section class="engine-note" id="motor">
