@@ -434,6 +434,7 @@
       const btn = document.createElement('button');
       btn.className = 'level-chip' + (state.level === level ? ' is-active' : '');
       btn.type = 'button';
+      btn.setAttribute('aria-pressed', state.level === level ? 'true' : 'false');
       btn.dataset.level = String(level);
       btn.innerHTML = LEVELS[level] + '<span>' + done + '/' + all.length + ' resueltos</span>';
       btn.addEventListener('click', function () {
@@ -445,11 +446,25 @@
     });
   }
 
+  /**
+   * Siguiente reto pendiente del nivel que se está viendo; si ese nivel ya está
+   * completo, el primero pendiente del catálogo (para que el botón nunca quede muerto).
+   */
+  function nextUnsolved() {
+    const visible = EXERCISES.filter(function (ex) { return ex.level === state.level; });
+    const inLevel = visible.find(function (ex) { return !state.solved.has(ex.id); });
+    if (inLevel) return inLevel;
+    return EXERCISES.find(function (ex) { return !state.solved.has(ex.id); }) || null;
+  }
+
   function renderList() {
     const list = $('#exercise-list');
     const visible = EXERCISES.filter((ex) => ex.level === state.level);
     const solvedHere = visible.filter((ex) => state.solved.has(ex.id)).length;
+    const next = nextUnsolved();
+    const nextId = next ? next.id : null;
     $('#side-count').textContent = solvedHere + ' de ' + visible.length;
+    $('#side-level-name').textContent = LEVELS[state.level];
     list.innerHTML = '';
     visible.forEach((ex, index) => {
       const solved = state.solved.has(ex.id);
@@ -458,15 +473,48 @@
       btn.type = 'button';
       btn.className = 'ex-item' +
         (ex.id === state.currentId ? ' is-active' : '') +
-        (solved ? ' is-solved' : '');
+        (solved ? ' is-solved' : '') +
+        (ex.id === nextId ? ' is-next' : '');
       btn.dataset.id = ex.id;
       btn.innerHTML = '<span class="ex-index">' + String(index + 1).padStart(2, '0') + '</span>' +
         '<span class="ex-name">' + escapeHTML(ex.title) + '</span>' +
+        (ex.id === nextId ? '<span class="ex-flag">siguiente</span>' : '') +
         (solved ? '<span class="ex-tick" aria-label="resuelto">✓</span>' : '');
       btn.addEventListener('click', function () { selectExercise(ex.id); });
       item.appendChild(btn);
       list.appendChild(item);
     });
+
+    const cta = $('#btn-continue');
+    cta.disabled = !next;
+    cta.querySelector('.cta-label').textContent = next
+      ? 'Continuar con ' + next.id.toUpperCase()
+      : 'Todo resuelto ✓';
+    cta.title = next
+      ? 'Ir al reto ' + next.id.toUpperCase() + ': ' + next.title
+      : 'Has resuelto todos los retos';
+  }
+
+  /** Mueve la selección dentro del nivel actual: nunca cambia de nivel sin querer. */
+  function stepExercise(delta) {
+    const level = EXERCISES.filter(function (ex) { return ex.level === state.level; });
+    const index = level.findIndex(function (ex) { return ex.id === state.currentId; });
+    if (index < 0) return;
+    const target = level[index + delta];
+    if (target) selectExercise(target.id);
+  }
+
+  function renderNav() {
+    const nav = $('#brief-nav');
+    const ex = currentExercise();
+    nav.hidden = !ex;
+    if (!ex) return;
+    const sameLevel = EXERCISES.filter(function (item) { return item.level === ex.level; });
+    const pos = sameLevel.findIndex(function (item) { return item.id === ex.id; }) + 1;
+    $('#ex-pos').textContent = 'Reto ' + pos + ' de ' + sameLevel.length + ' · ' + LEVELS[ex.level];
+    const index = sameLevel.findIndex(function (item) { return item.id === ex.id; });
+    $('#ex-prev').disabled = index <= 0;
+    $('#ex-next').disabled = index >= sameLevel.length - 1;
   }
 
   function renderProgress() {
@@ -531,6 +579,7 @@
         'al estado original. El esquema completo está en la barra lateral.';
       chips.innerHTML = '';
       hintBox.hidden = true;
+      renderNav();
       return;
     }
 
@@ -552,6 +601,7 @@
         meta.columns.map((col) => '<li><b>' + escapeHTML(col[0]) + '</b> <i>' + escapeHTML(col[1]) + '</i></li>').join('') +
         '</ul></details>';
     }).join('');
+    renderNav();
   }
 
   function renderSchema() {
@@ -997,6 +1047,13 @@
       renderList();
       renderBrief();
     });
+
+    $('#btn-continue').addEventListener('click', function () {
+      const next = nextUnsolved();
+      if (next) selectExercise(next.id);
+    });
+    $('#ex-prev').addEventListener('click', function () { stepExercise(-1); });
+    $('#ex-next').addEventListener('click', function () { stepExercise(1); });
 
     window.addEventListener('beforeunload', saveDraft);
     window.addEventListener('resize', function () {

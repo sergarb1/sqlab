@@ -279,11 +279,23 @@ LIMIT 3;</pre>
   <aside class="sidebar">
     <div id="panel-practica">
       <div class="side-head">
-        <h2>Retos</h2>
+        <h2>Practicar</h2>
         <span id="side-count" class="muted small"></span>
       </div>
-      <div class="levels" id="levels"></div>
-      <ul id="exercise-list" class="ex-list"></ul>
+
+      <p class="side-step"><span class="step-num" aria-hidden="true">1</span> Elige el nivel</p>
+      <div class="levels" id="levels" role="group" aria-label="Niveles"></div>
+
+      <button type="button" class="side-cta" id="btn-continue">
+        <span class="cta-label">Continuar con el reto siguiente</span>
+        <span class="arrow" aria-hidden="true">→</span>
+      </button>
+
+      <div class="ex-head">
+        <p class="side-step"><span class="step-num" aria-hidden="true">2</span> Elige el reto</p>
+        <span class="muted small" id="side-level-name">Fácil</span>
+      </div>
+      <ul id="exercise-list" class="ex-list" aria-label="Retos del nivel"></ul>
       <div class="side-foot">
         <button id="reset-progress" class="ghost small">↺ Reiniciar progreso</button>
       </div>
@@ -320,6 +332,11 @@ LIMIT 3;</pre>
         <summary>💡 Pista</summary>
         <p id="ex-hint"></p>
       </details>
+      <div class="brief-nav" id="brief-nav">
+        <button type="button" class="ghost small" id="ex-prev">← Anterior</button>
+        <span class="muted small" id="ex-pos"></span>
+        <button type="button" class="ghost small" id="ex-next">Siguiente →</button>
+      </div>
     </article>
 
     <div class="card editor-card">
