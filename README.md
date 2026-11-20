@@ -1,5 +1,9 @@
 # SQLab
 
+![Cabecera de SQLab: 44 retos de SQL con SQLite real en el navegador](assets/banner.png)
+
+**En línea:** <https://sergarb1.github.io/sqlab/> · **Código:** <https://github.com/sergarb1/sqlab>
+
 Laboratorio para practicar SQL con un motor **SQLite real** (compilado a WebAssembly con
 [sql.js](https://sql.js.org)) que se ejecuta dentro del navegador. Sin backend, sin cuentas y sin
 enviar consultas a ningún servidor.
@@ -19,9 +23,7 @@ enviar consultas a ningún servidor.
   ```
 
 - **GitHub Pages**: sube el contenido del proyecto y activa Pages; no hace falta configurar nada más.
-- **Instalada como app (PWA)**: sobre `https://` o `localhost`, el navegador ofrece instalarla (botón
-  **Instalar** en la barra superior). El service worker (`sw.js`) cachea todo, incluido el WASM, así
-  que después se abre sin conexión. Desde `file://` no hay service worker, pero la app funciona igual.
+- **Instalada como app**: ver [Instalación como app (PWA)](#instalación-como-app-pwa).
 
 ## Qué incluye
 
@@ -36,10 +38,74 @@ enviar consultas a ningún servidor.
 - **Pistas y solución** en cada ejercicio, con una explicación breve al acertar.
 - **Laboratorio libre**: escribe cualquier sentencia (incluido `CREATE TABLE` / `INSERT`) sobre la
   misma base de datos, navega el esquema y restaura los datos originales cuando quieras.
-- **Progreso en `localStorage`** (se ve en la barra superior y en cada nivel).
+- **Progreso en `localStorage`** (se ve en la barra superior, en cada nivel y en la portada).
+- **Tema oscuro y claro** conmutable, con la preferencia guardada.
+- **Portada con navegación por secciones**, tabla de ejemplo real, progreso por nivel, atajos y
+  preguntas frecuentes.
+- **Instalable como PWA** y utilizable sin conexión después de la primera visita.
 
 En los retos solo se permiten consultas de lectura; las escrituras se reservan al laboratorio para
 no romper el estado de la base de datos.
+
+## Portada y tema
+
+La entrada es una portada independiente de la aplicación:
+
+- **Hero** con la llamada a la acción y estadísticas (retos, niveles, tablas y retos resueltos).
+- **Consulta de ejemplo** ejecutada de verdad contra `tienda.db` al cargar: no es una captura.
+- **Progreso por nivel** con barras, contador (`3 / 12`) y marca ✓ al completar un nivel.
+- **Características**, **cómo se practica**, **atajos**, **preguntas frecuentes** y un cierre con CTA.
+- **Navegación por anclas** en la barra superior (`Retos · Características · Cómo · Atajos · FAQ · Motor`),
+  oculta dentro de la aplicación y en pantallas estrechas.
+
+El botón ☀/☾ alterna entre tema oscuro (por defecto) y claro. La elección se guarda en
+`localStorage` (`sqlab.theme.v1`), se aplica **antes de pintar** para evitar destellos y actualiza
+`<meta name="theme-color">` para que la barra del navegador combine con la interfaz.
+
+## Atajos de teclado
+
+| Atajo | Acción |
+| --- | --- |
+| `Ctrl`/`Cmd` + `Enter` | Ejecutar la consulta del editor |
+| `Tab` | Indentar dos espacios en la posición del cursor |
+
+El resto de acciones (solución, limpiar, siguiente reto, restaurar datos) tienen botón propio en la
+interfaz.
+
+## Instalación como app (PWA)
+
+Sobre `https://` o `localhost` la aplicación se puede instalar; desde `file://` funciona igual pero
+sin service worker:
+
+1. Pulsa **Instalar** en la barra superior cuando aparezca (o el icono de instalación del navegador).
+2. En Android: menú ⋮ → «Instalar aplicación». En iOS: Compartir → «Añadir a pantalla de inicio».
+
+`manifest.webmanifest` define nombre, iconos, colores y modo `standalone`. `sw.js` precachea la
+interfaz, los datos y el WASM, sirve la portada cacheada cuando no hay red y actualiza el resto de
+archivos en segundo plano. Al cambiar archivos, sube `VERSION` en `sw.js` para invalidar la caché.
+
+## Preguntas frecuentes
+
+**¿Necesito instalarlo o crear una cuenta?** No. Se abre en el navegador y funciona sin registro;
+el motor SQLite viaja con la página. Instalarla es opcional.
+
+**¿Dónde se guarda mi progreso?** En este dispositivo, en el almacenamiento local del navegador:
+retos resueltos y borrador de cada consulta. Nada se envía a ningún servidor. «Reiniciar progreso»
+lo borra, y también desaparece si limpias los datos del navegador.
+
+**¿Puedo romper la base de datos?** En los retos no: solo se permiten consultas de lectura. En el
+laboratorio puedes crear, insertar y borrar, y «Restaurar datos» devuelve `tienda.db` a su estado
+original al instante.
+
+**¿Funciona sin conexión?** Sí, después de la primera visita, gracias al service worker. También
+funciona con doble clic en `index.html`, aunque ahí no se instala.
+
+**¿Cómo corrige mi consulta?** Se ejecuta contra una copia limpia de la base de datos y se compara
+con el resultado de la solución oficial, sin importar el orden salvo cuando el enunciado lo exige;
+en ese caso se comprueba la columna pedida tolerando los empates.
+
+**¿Es gratis? ¿Con qué licencia?** Sí: sin anuncios, cuentas ni límites. El código está publicado con
+licencia AGPL-3.0, © 2026 Sergi Garcia Barea.
 
 ## Estructura
 
@@ -54,6 +120,7 @@ vendor/sql-wasm.wasm       binario original (referencia / uso con servidor)
 manifest.webmanifest       datos de instalación de la PWA
 sw.js                      service worker (caché y uso sin conexión)
 icons/                     iconos de la app (192, 512, maskable y apple-touch)
+assets/banner.png          imagen de cabecera de este README
 ```
 
 ## Añadir un reto
