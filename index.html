@@ -51,7 +51,7 @@
     <a href="#como">Cómo se practica</a>
     <a href="#atajos">Atajos</a>
     <a href="#preguntas">FAQ</a>
-    <a href="#motor">Motor</a>
+    <a href="#motor">SQLite</a>
   </nav>
 
   <nav class="modes" aria-label="Modo de trabajo">
@@ -235,18 +235,94 @@ LIMIT 3;</pre>
         <p>Ejecuta tu SQL contra una copia limpia de la base de datos y compara sus filas con las de la solución oficial, sin importar el orden salvo cuando el enunciado lo exige. En ese caso se comprueba la columna pedida tolerando los empates.</p>
       </details>
       <details>
+        <summary>¿Lo que aprendo aquí sirve para PostgreSQL o MySQL?</summary>
+        <p>Casi todo: <code>SELECT</code>, <code>JOIN</code>, <code>GROUP BY</code>, subconsultas, CTE y funciones de ventana se escriben igual. El motor es SQLite 3.49, así que no verás funciones propias de un servidor como roles, <code>GRANT</code>, procedimientos almacenados o <code>jsonb</code>. En la <a href="#motor">sección del motor</a> está la comparación y las equivalencias más habituales.</p>
+      </details>
+      <details>
         <summary>¿Es gratis? ¿Con qué licencia?</summary>
         <p>Sí: sin anuncios, sin cuentas y sin límites. El código está en <a href="https://github.com/sergarb1/sqlab" target="_blank" rel="noreferrer">github.com/sergarb1/sqlab</a> con licencia AGPL-3.0, © 2026 Sergi Garcia Barea.</p>
       </details>
     </div>
   </section>
 
-  <section class="engine-note" id="motor">
-    <div class="ico" aria-hidden="true">⚙️</div>
-    <div>
-      <h3>Motor real, no un simulador</h3>
-      <p>SQLite compilado a WebAssembly se carga una sola vez (<code>~880 KB</code>) y se ejecuta dentro de tu navegador: las mismas consultas, el mismo plan y los mismos errores que en una base de datos de verdad.</p>
+  <section class="engine" id="motor" aria-labelledby="motor-title">
+    <div class="sec-head">
+      <h2 id="motor-title">El motor es SQLite, con sus límites</h2>
+      <span class="muted small">Qué practicas igual y qué cambia en PostgreSQL o MySQL.</span>
     </div>
+    <p class="engine-lede">Los retos no simulan SQL: se ejecutan en <b>SQLite 3.49</b> compilado a WebAssembly con <a href="https://sql.js.org" target="_blank" rel="noreferrer">sql.js</a>, el mismo motor empotrado que llevan móviles y miles de aplicaciones, cargado una sola vez (<code>~880 KB</code>) dentro de tu navegador. Eso es lo que permite practicar sin servidor ni cuentas, y también lo que marca la frontera: SQLite está pensado para un archivo y un usuario, no para atender a muchos clientes a la vez.</p>
+
+    <div class="cmp-wrap" tabindex="0" role="region" aria-label="Comparación entre SQLite, PostgreSQL y MySQL">
+      <table class="cmp">
+        <caption>SQLite frente a los motores cliente-servidor más habituales</caption>
+        <thead>
+          <tr>
+            <th scope="col">Aspecto</th>
+            <th scope="col">SQLite (aquí)</th>
+            <th scope="col">PostgreSQL</th>
+            <th scope="col">MySQL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Dónde vive</th>
+            <td>Dentro de la página: un archivo o memoria, sin proceso aparte</td>
+            <td>Servicio en un servidor; los clientes se conectan por red</td>
+            <td>Servicio en un servidor, igual que PostgreSQL</td>
+          </tr>
+          <tr>
+            <th scope="row">Tipos de dato</th>
+            <td>Afinidad: <code>INTEGER</code>, <code>REAL</code>, <code>TEXT</code>, <code>BLOB</code>; una fecha es texto o número</td>
+            <td>Estrictos y ricos: <code>uuid</code>, <code>jsonb</code>, <code>interval</code>, arrays</td>
+            <td>Por columna; estrictos desde 8.0 y <code>JSON</code> desde 5.7</td>
+          </tr>
+          <tr>
+            <th scope="row">Booleanos</th>
+            <td>No hay tipo propio: <code>TRUE</code> y <code>FALSE</code> son <code>1</code> y <code>0</code></td>
+            <td><code>BOOLEAN</code> de verdad</td>
+            <td><code>TINYINT(1)</code>; sin <code>BOOLEAN</code> nativo</td>
+          </tr>
+          <tr>
+            <th scope="row">Concurrencia</th>
+            <td>Un escritor a la vez; con WAL se puede leer mientras se escribe</td>
+            <td>MVCC: muchas escrituras en paralelo</td>
+            <td>MVCC con InnoDB</td>
+          </tr>
+          <tr>
+            <th scope="row">Usuarios y permisos</th>
+            <td>No existen roles ni <code>GRANT</code>: quien tiene el archivo lo controla</td>
+            <td>Roles, <code>GRANT</code> y seguridad por fila (RLS)</td>
+            <td>Usuarios y privilegios por tabla</td>
+          </tr>
+          <tr>
+            <th scope="row">Esquemas y metadatos</th>
+            <td>Uno solo (<code>main</code>) y <code>ATTACH</code> para otras bases; metadatos con <code>PRAGMA table_info()</code></td>
+            <td>Varios esquemas, <code>search_path</code> e <code>information_schema</code></td>
+            <td>Base de datos + esquema e <code>information_schema</code></td>
+          </tr>
+          <tr>
+            <th scope="row">Programación</th>
+            <td>Triggers, CTE y ventanas; sin procedimientos almacenados</td>
+            <td>PL/pgSQL, funciones propias y extensiones</td>
+            <td>Stored procedures y eventos</td>
+          </tr>
+          <tr>
+            <th scope="row"><code>ALTER TABLE</code></th>
+            <td>Limitado: no cambia el tipo de una columna ni quita constraints</td>
+            <td>Casi cualquier cambio, a menudo sin bloquear la tabla</td>
+            <td>Amplio, con <code>ALGORITHM=INSTANT</code> en muchos casos</td>
+          </tr>
+          <tr>
+            <th scope="row">Joins y ventanas</th>
+            <td><code>RIGHT</code> y <code>FULL JOIN</code> desde 3.39; CTE y window functions desde 3.25</td>
+            <td>Todo desde siempre, más funciones analíticas propias</td>
+            <td><code>FULL JOIN</code> no existe: se emula con <code>UNION</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="engine-tip"><span aria-hidden="true">💡</span><span><b>Al cambiar de motor</b>, tres equivalencias típicas: <code>ILIKE</code> pasa a <code>LIKE … COLLATE NOCASE</code>, <code>SERIAL</code> a <code>INTEGER PRIMARY KEY</code> y un cast <code>::date</code> a <code>date(...)</code>. El resto —<code>SELECT</code>, <code>JOIN</code>, <code>GROUP BY</code>, subconsultas, CTE y ventanas— es ANSI y se escribe igual en los tres.</span></p>
   </section>
 
   <section class="closing" id="empezar" aria-labelledby="closing-title">

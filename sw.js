@@ -6,7 +6,7 @@
  * Guarda los archivos propios (incluido el WASM embebido) para que el
  * laboratorio abra y funcione sin conexión una vez visitado.
  */
-const VERSION = 'sqlab-v1';
+const VERSION = 'sqlab-v2';
 const CORE = [
   './',
   './index.html',

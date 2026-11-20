@@ -1083,27 +1083,95 @@ button.big { padding: 11px 19px; font-size: 14px; border-radius: 11px; }
   color: var(--code-ink);
 }
 
-.engine-note {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-  padding: 18px 20px;
-  border: 1px dashed var(--line);
-  border-radius: var(--r-lg);
-  background: var(--surface);
+/* ── el motor: SQLite frente a otros ── */
+.engine-lede {
+  margin: -2px 0 18px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text-2);
+  max-width: 88ch;
 }
-.engine-note .ico { font-size: 20px; line-height: 1.2; }
-.engine-note h3 { font-size: 14.5px; margin-bottom: 4px; }
-.engine-note p { font-size: 13px; color: var(--text-2); }
-.engine-note code {
+.engine-lede b { color: var(--text); }
+.engine-lede a { color: var(--accent); }
+.engine-lede code,
+.cmp code,
+.engine-tip code {
   font-family: var(--mono);
   font-size: 11.5px;
-  color: var(--accent);
   background: var(--code-bg);
   border: 1px solid var(--line-soft);
   border-radius: 4px;
-  padding: 1px 5px;
+  padding: 0 4px;
+  color: var(--code-ink);
 }
+
+.cmp-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  -webkit-overflow-scrolling: touch;
+}
+.cmp-wrap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+table.cmp {
+  width: 100%;
+  min-width: 780px;
+  border: 0;
+  border-collapse: collapse;
+  font-size: 12.8px;
+}
+table.cmp caption {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--bar-soft);
+  border-bottom: 1px solid var(--line-soft);
+}
+table.cmp th,
+table.cmp td {
+  padding: 10px 15px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line-soft);
+}
+table.cmp thead th {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface-2);
+  white-space: nowrap;
+}
+table.cmp thead th:nth-child(2) { color: var(--accent); }
+table.cmp tbody th { font-weight: 600; color: var(--text); white-space: nowrap; }
+table.cmp td { color: var(--text-2); }
+table.cmp td:nth-child(2) { color: var(--text); background: rgba(62, 233, 196, .045); }
+table.cmp tbody tr:last-child th,
+table.cmp tbody tr:last-child td { border-bottom: 0; }
+table.cmp tbody tr:hover td,
+table.cmp tbody tr:hover th { background: var(--hover); }
+table.cmp tbody tr:hover td:nth-child(2) { background: rgba(62, 233, 196, .075); }
+
+.engine-tip {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 12px 0 0;
+  padding: 13px 16px;
+  border: 1px dashed var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  font-size: 12.8px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.engine-tip b { color: var(--text); }
 
 @media (max-width: 980px) {
   .home { gap: 40px; padding: 22px 14px 34px; }
