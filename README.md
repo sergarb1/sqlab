@@ -4,6 +4,9 @@ Laboratorio para practicar SQL con un motor **SQLite real** (compilado a WebAsse
 [sql.js](https://sql.js.org)) que se ejecuta dentro del navegador. Sin backend, sin cuentas y sin
 enviar consultas a ningún servidor.
 
+> **Licencia:** GNU Affero General Public License v3.0 · © 2026 Sergi Garcia Barea.
+> Ver [LICENSE](LICENSE).
+
 ## Cómo abrirlo
 
 - **Doble clic en `index.html`**: funciona directamente porque el WASM va embebido en
@@ -64,3 +67,18 @@ Añade un objeto a `exercises` en `data.js`:
 El resultado esperado **no** se escribe a mano: se ejecuta `solution` contra una copia limpia de la
 base de datos al cargar la página. Si el reto exige un orden concreto, añade `ordered: true` y
 `orderBy: 'columna'`, `orderDir: 'asc' | 'desc'` para comparar solo esa columna.
+
+## Licencia
+
+Copyright (C) 2026 **Sergi Garcia Barea**.
+
+Este proyecto se distribuye bajo la **GNU Affero General Public License v3.0** (AGPL-3.0-or-later).
+Puedes usarlo, estudiarlo, modificarlo y redistribuirlo siempre que conserves la licencia y el
+autoría, y si lo publicas como servicio en red debes ofrecer el código fuente a sus usuarios.
+El texto completo está en [LICENSE](LICENSE):
+
+- Repositorio: <https://github.com/sergarb1/sqlab>
+- Licencia: <https://www.gnu.org/licenses/agpl-3.0.html>
+
+Las dependencias de terceros conservan sus propias licencias: [sql.js](https://github.com/sql-js/sql.js)
+(MIT) y [SQLite](https://www.sqlite.org/copyright.html) (dominio público).

@@ -1,6 +1,10 @@
 /*
  * SQLab · aplicación
  * Motor SQLite real (sql.js / WebAssembly) + retos autocorregidos en el navegador.
+ *
+ * Copyright (C) 2026 Sergi Garcia Barea
+ * Licencia: GNU Affero General Public License v3.0 o posterior (AGPL-3.0-or-later).
+ * Texto completo en LICENSE · https://www.gnu.org/licenses/agpl-3.0.html
  */
 (function () {
   'use strict';

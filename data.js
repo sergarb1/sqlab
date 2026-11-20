@@ -2,6 +2,10 @@
  * SQLab · datos
  * Esquema + datos de ejemplo (tienda.db) y catálogo de retos.
  * Se puede cargar tanto en el navegador (window.SQLAB_DATA) como en Node.
+ *
+ * Copyright (C) 2026 Sergi Garcia Barea
+ * Licencia: GNU Affero General Public License v3.0 o posterior (AGPL-3.0-or-later).
+ * Texto completo en LICENSE · https://www.gnu.org/licenses/agpl-3.0.html
  */
 (function (root) {
   'use strict';
