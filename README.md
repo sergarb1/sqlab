@@ -4,6 +4,8 @@
 
 **En línea:** <https://sergarb1.github.io/sqlab/> · **Código:** <https://github.com/sergarb1/sqlab>
 
+**Autor:** Sergi Garcia Barea · [mejoratudocencia.es](https://mejoratudocencia.es)
+
 Laboratorio para practicar SQL con un motor **SQLite real** (compilado a WebAssembly con
 [sql.js](https://sql.js.org)) que se ejecuta dentro del navegador. Sin backend, sin cuentas y sin
 enviar consultas a ningún servidor.
@@ -121,6 +123,8 @@ manifest.webmanifest       datos de instalación de la PWA
 sw.js                      service worker (caché y uso sin conexión)
 icons/                     iconos de la app (192, 512, maskable y apple-touch)
 assets/banner.png          imagen de cabecera de este README
+AGENTS.md                  guía para agentes y colaboradores
+HANDS-OFF.md               límites del proyecto (autoría y licencia)
 ```
 
 ## Añadir un reto
@@ -143,7 +147,7 @@ base de datos al cargar la página. Si el reto exige un orden concreto, añade `
 
 ## Licencia
 
-Copyright (C) 2026 **Sergi Garcia Barea**.
+Copyright (C) 2026 **Sergi Garcia Barea** · [mejoratudocencia.es](https://mejoratudocencia.es).
 
 Este proyecto se distribuye bajo la **GNU Affero General Public License v3.0** (AGPL-3.0-or-later).
 Puedes usarlo, estudiarlo, modificarlo y redistribuirlo siempre que conserves la licencia y el
@@ -152,6 +156,10 @@ El texto completo está en [LICENSE](LICENSE):
 
 - Repositorio: <https://github.com/sergarb1/sqlab>
 - Licencia: <https://www.gnu.org/licenses/agpl-3.0.html>
+
+El aviso de autoría y licencia debe mantenerse también en `AGENTS.md`, `HANDS-OFF.md` y en el
+pie de la web. Las condiciones para colaboradores y agentes están en [AGENTS.md](AGENTS.md) y en
+[HANDS-OFF.md](HANDS-OFF.md).
 
 Las dependencias de terceros conservan sus propias licencias: [sql.js](https://github.com/sql-js/sql.js)
 (MIT) y [SQLite](https://www.sqlite.org/copyright.html) (dominio público).
