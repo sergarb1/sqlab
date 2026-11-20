@@ -1,17 +1,27 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SQLab · Practica SQL con un motor real</title>
 <meta name="description" content="Laboratorio de SQL en el navegador: 44 retos con SQLite real (WebAssembly), esquema navegable y modo libre. Sin backend.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b14'/%3E%3Cpath d='M14 26c0-6 8-10 18-10s18 4 18 10-8 10-18 10-18-4-18-10z' fill='none' stroke='%233ee9c4' stroke-width='4'/%3E%3Cpath d='M14 26v12c0 6 8 10 18 10s18-4 18-10V26' fill='none' stroke='%233ee9c4' stroke-width='4'/%3E%3C/svg%3E">
+<script>
+  /* El tema se aplica antes de pintar para que no haya destello. */
+  (function () {
+    try {
+      var saved = localStorage.getItem('sqlab.theme.v1');
+      if (saved) { try { saved = JSON.parse(saved); } catch (err) { /* valor antiguo */ } }
+      if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+    } catch (err) { /* sin almacenamiento */ }
+  })();
+</script>
 <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body data-view="home">
 
 <header class="topbar">
-  <a class="brand" href="#" aria-label="SQLab, inicio">
+  <a class="brand" href="#" id="brand-home" aria-label="SQLab, volver a la portada">
     <span class="logo" aria-hidden="true">
       <svg viewBox="0 0 64 64" width="26" height="26"><path d="M10 24c0-7 10-12 22-12s22 5 22 12-10 12-22 12S10 31 10 24z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M10 24v16c0 7 10 12 22 12s22-5 22-12V24" fill="none" stroke="currentColor" stroke-width="5"/></svg>
     </span>
@@ -26,16 +36,119 @@
     <button class="mode-btn" id="mode-sandbox" data-mode="sandbox">🧪 Laboratorio</button>
   </nav>
 
-  <div class="progress" aria-live="polite">
-    <div class="progress-meta">
-      <span id="progress-label">0 / 44 resueltos</span>
-      <span id="progress-pct" class="muted">0%</span>
+  <div class="top-actions">
+    <div class="progress" aria-live="polite">
+      <div class="progress-meta">
+        <span id="progress-label">0 / 44 resueltos</span>
+        <span id="progress-pct" class="muted">0%</span>
+      </div>
+      <div class="bar"><i id="progress-fill"></i></div>
     </div>
-    <div class="bar"><i id="progress-fill"></i></div>
+    <button type="button" class="icon-btn" id="btn-home" aria-label="Volver a la portada" title="Volver a la portada">⌂</button>
+    <button type="button" class="icon-btn" id="theme-toggle" aria-label="Cambiar de tema" aria-pressed="false" title="Cambiar de tema"><span id="theme-icon" aria-hidden="true">☀</span></button>
   </div>
 </header>
 
-<main class="layout">
+<!-- ─────────── portada ─────────── -->
+<main class="home" id="home">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">SQLite real · sin instalar nada</span>
+      <h1>Aprende SQL <em>practicando</em>, de verdad</h1>
+      <p class="lead">44 retos por niveles sobre una base de datos de tienda. Escribes la consulta, se ejecuta en un SQLite de verdad y se corrige al instante comparándola con la solución oficial.</p>
+      <div class="hero-actions">
+        <button type="button" class="primary big" id="cta-start">Empezar a practicar →</button>
+        <button type="button" class="ghost big" id="cta-sandbox">Abrir laboratorio</button>
+      </div>
+      <ul class="stats">
+        <li><b id="stat-total">44</b><span>retos</span></li>
+        <li><b>4</b><span>niveles</span></li>
+        <li><b>7</b><span>tablas</span></li>
+        <li><b id="stat-progress">0</b><span>resueltos por ti</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-demo">
+      <div class="demo-card">
+        <div class="demo-bar">
+          <span class="file-dot" aria-hidden="true"></span>
+          <span class="file-name">consulta.sql</span>
+        </div>
+        <pre class="demo-code">SELECT c.nombre AS cliente,
+       COUNT(p.id) AS pedidos,
+       ROUND(SUM(l.cantidad * l.precio_unitario), 2) AS gasto
+FROM clientes c
+JOIN pedidos p ON p.cliente_id = c.id
+JOIN lineas_pedido l ON l.pedido_id = p.id
+GROUP BY c.id
+ORDER BY gasto DESC
+LIMIT 3;</pre>
+        <div id="demo-results" class="demo-results">
+          <div class="demo-loading">Consultando la base de datos…</div>
+        </div>
+        <div class="demo-foot">
+          <span class="dot-ok" aria-hidden="true"></span>
+          <span id="demo-meta">SQLite cargando…</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" aria-label="Qué ofrece SQLab">
+    <article class="feature">
+      <div class="ico" aria-hidden="true">🎯</div>
+      <h3>Retos que se corrigen solos</h3>
+      <p>Compara la tabla que devuelve tu consulta con el resultado de la solución oficial. Si el enunciado pide orden, también se comprueba el orden.</p>
+    </article>
+    <article class="feature">
+      <div class="ico" aria-hidden="true">🧪</div>
+      <h3>Laboratorio libre</h3>
+      <p>Explora las 7 tablas, prueba <code>JOIN</code>, crea tus propias tablas e insértales datos. «Restaurar datos» lo devuelve todo a su estado original.</p>
+    </article>
+    <article class="feature">
+      <div class="ico" aria-hidden="true">🔒</div>
+      <h3>Sin servidor ni cuentas</h3>
+      <p>Todo se ejecuta en tu navegador y el progreso se guarda en este dispositivo. Puedes abrirlo incluso con doble clic, sin conexión.</p>
+    </article>
+  </section>
+
+  <section class="how">
+    <div class="sec-head">
+      <h2>Cómo se practica</h2>
+      <span class="muted small">De los filtros a las funciones de ventana.</span>
+    </div>
+    <ol class="steps">
+      <li>
+        <b>Elige un reto</b>
+        <p>Cuatro niveles: Fácil, Medio, Avanzado y ⭐ Reto 10, de <code>WHERE</code> a <code>ROW_NUMBER()</code>.</p>
+      </li>
+      <li>
+        <b>Escribe y ejecuta</b>
+        <p>Escribe la consulta y pulsa <kbd>Ctrl</kbd><kbd>↵</kbd>: se ejecuta contra la base de datos real.</p>
+      </li>
+      <li>
+        <b>Aprende del error</b>
+        <p>Si no coincide, te dice cuántas filas faltan o sobran, con una fila de ejemplo y una pista.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="engine-note">
+    <div class="ico" aria-hidden="true">⚙️</div>
+    <div>
+      <h3>Motor real, no un simulador</h3>
+      <p>SQLite compilado a WebAssembly se carga una sola vez (<code>~880 KB</code>) y se ejecuta dentro de tu navegador: las mismas consultas, el mismo plan y los mismos errores que en una base de datos de verdad.</p>
+    </div>
+  </section>
+
+  <footer class="page-foot">
+    <span>SQLite compilado a WebAssembly (<a href="https://sql.js.org" target="_blank" rel="noreferrer">sql.js</a>) · todo ocurre en tu navegador, sin servidor ni cuentas.</span>
+    <span class="muted">Tu progreso se guarda en este dispositivo.</span>
+  </footer>
+</main>
+
+<!-- ─────────── aplicación ─────────── -->
+<main class="layout" id="app" hidden>
 
   <aside class="sidebar">
     <div id="panel-practica">

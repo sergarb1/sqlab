@@ -14,8 +14,14 @@
   };
   const STORAGE = {
     progress: 'sqlab.progress.v1',
-    drafts: 'sqlab.drafts.v1'
+    drafts: 'sqlab.drafts.v1',
+    theme: 'sqlab.theme.v1'
   };
+  const DEMO_SQL = 'SELECT c.nombre AS cliente, COUNT(p.id) AS pedidos, ' +
+    'ROUND(SUM(l.cantidad * l.precio_unitario), 2) AS gasto ' +
+    'FROM clientes c JOIN pedidos p ON p.cliente_id = c.id ' +
+    'JOIN lineas_pedido l ON l.pedido_id = p.id ' +
+    'GROUP BY c.id ORDER BY gasto DESC LIMIT 3;';
   const SAVE_DELAY = 350;
   const SANDBOX_STARTER = '-- Laboratorio libre sobre tienda.db\n-- Escribe cualquier consulta y pulsa Ctrl + Enter\n\nSELECT *\nFROM productos\nORDER BY precio DESC\nLIMIT 10;';
 
@@ -27,6 +33,7 @@
   const $$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
 
   const state = {
+    view: 'home',
     mode: 'practica',
     level: 1,
     currentId: null,
@@ -65,14 +72,78 @@
     }
   }
 
+  /* ───────────────── portada y tema ───────────────── */
+
+  function showView(view) {
+    const changed = state.view !== view;
+    if (changed) saveDraft();
+    state.view = view;
+    document.body.dataset.view = view;
+    $('#home').hidden = view !== 'home';
+    $('#app').hidden = view !== 'app';
+    window.scrollTo(0, 0);
+    if (view === 'app' && changed && window.innerWidth > 980) editor.focus();
+  }
+
+  function currentTheme() {
+    return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+  }
+
+  function applyTheme(theme, persist) {
+    const light = theme === 'light';
+    document.documentElement.dataset.theme = light ? 'light' : 'dark';
+    const icon = $('#theme-icon');
+    const button = $('#theme-toggle');
+    if (icon) icon.textContent = light ? '☾' : '☀';
+    if (button) {
+      button.title = light ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro';
+      button.setAttribute('aria-label', button.title);
+      button.setAttribute('aria-pressed', light ? 'true' : 'false');
+    }
+    if (persist) saveJSON(STORAGE.theme, light ? 'light' : 'dark');
+  }
+
+  function renderHome() {
+    const total = $('#stat-total');
+    if (total) total.textContent = String(EXERCISES.length);
+    renderProgress();
+  }
+
+  /** Pinta en la portada una consulta real ejecutada contra tienda.db. */
+  function renderDemoTable() {
+    const target = $('#demo-results');
+    if (!target || !state.db) return;
+    try {
+      const sets = state.db.exec(DEMO_SQL);
+      const last = sets.length ? sets[sets.length - 1] : null;
+      if (!last) return;
+      target.innerHTML = '<table class="grid"><thead><tr>' +
+        last.columns.map(function (col) { return '<th>' + escapeHTML(col) + '</th>'; }).join('') +
+        '</tr></thead><tbody>' +
+        last.values.map(function (row) {
+          return '<tr>' + row.map(function (value) {
+            if (value === null) return '<td><span class="null">NULL</span></td>';
+            if (typeof value === 'number') return '<td class="num">' + formatNumber(value) + '</td>';
+            return '<td>' + escapeHTML(String(value)) + '</td>';
+          }).join('') + '</tr>';
+        }).join('') + '</tbody></table>';
+      const meta = $('#demo-meta');
+      if (meta) meta.textContent = last.values.length + ' filas · SQLite en tu navegador';
+    } catch (err) {
+      /* la portada nunca debe romper la aplicación */
+    }
+  }
+
   /* ───────────────── arranque ───────────────── */
 
   async function boot() {
+    applyTheme(loadJSON(STORAGE.theme, document.documentElement.dataset.theme) === 'light' ? 'light' : 'dark', false);
     editor = createEditor();
     bindEvents();
     renderSchema();
     renderExamples();
     renderProgress();
+    renderHome();
     selectExercise(EXERCISES[0].id);
 
     try {
@@ -87,6 +158,7 @@
       $('#btn-run').disabled = false;
       document.documentElement.dataset.engine = 'ready';
       selectExercise(firstUnsolved());
+      renderDemoTable();
     } catch (err) {
       $('#engine-status').textContent = 'No se pudo iniciar el motor SQLite';
       document.documentElement.dataset.engine = 'error';
@@ -352,6 +424,10 @@
     $('#progress-label').textContent = done + ' / ' + total + ' resueltos';
     $('#progress-pct').textContent = pct + '%';
     $('#progress-fill').style.width = pct + '%';
+    const stat = $('#stat-progress');
+    if (stat) stat.textContent = String(done);
+    const cta = $('#cta-start');
+    if (cta) cta.textContent = done ? 'Seguir practicando →' : 'Empezar a practicar →';
   }
 
   /* ───────────────── reto actual ───────────────── */
@@ -764,6 +840,26 @@
   /* ───────────────── eventos ───────────────── */
 
   function bindEvents() {
+    $('#brand-home').addEventListener('click', function (event) {
+      event.preventDefault();
+      showView('home');
+    });
+    $('#btn-home').addEventListener('click', function () { showView('home'); });
+    $('#theme-toggle').addEventListener('click', function () {
+      applyTheme(currentTheme() === 'light' ? 'dark' : 'light', true);
+    });
+    $('#cta-start').addEventListener('click', function () {
+      showView('app');
+      setMode('practica');
+      selectExercise(state.currentId || firstUnsolved());
+      editor.focus();
+    });
+    $('#cta-sandbox').addEventListener('click', function () {
+      showView('app');
+      setMode('sandbox');
+      editor.focus();
+    });
+
     $('#mode-practica').addEventListener('click', function () { setMode('practica'); });
     $('#mode-sandbox').addEventListener('click', function () { setMode('sandbox'); });
     $('#btn-run').addEventListener('click', runQuery);
